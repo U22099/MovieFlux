@@ -1,24 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-const useFetch = <T>(fetchFunction: () => Promise<T>, autoFetch = true) => {
+const useFetch = <T>(
+  fetchFunction: () => Promise<T>, 
+  refreshInterval?: number,
+  autoFetch = true, 
+) => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  
+  const fetchRef = useRef(fetchFunction);
+  fetchRef.current = fetchFunction;
 
-  const fetchData = async () => {
+  const fetchData = async (isAutoRefresh = false) => {
     try {
-      setLoading(true);
+      if (!isAutoRefresh) setLoading(true);
       setError(null);
 
-      const result = await fetchFunction();
-
+      const result = await fetchRef.current();
       setData(result);
     } catch (err) {
-      // @ts-ignore
       setError(err instanceof Error ? err : new Error("An error occurred"));
       console.error(err);
     } finally {
-      setLoading(false);
+      if (!isAutoRefresh) setLoading(false);
     }
   };
 
@@ -30,9 +35,17 @@ const useFetch = <T>(fetchFunction: () => Promise<T>, autoFetch = true) => {
 
   useEffect(() => {
     if (autoFetch) fetchData();
-  }, []);
 
-  return { data, loading, error, refetch: fetchData, reset };
+    if (refreshInterval) {
+      const interval = setInterval(() => {
+        fetchData(true);
+      }, refreshInterval);
+
+      return () => clearInterval(interval);
+    }
+  }, [autoFetch, refreshInterval]);
+
+  return { data, loading, error, refetch: () => fetchData(), reset };
 };
 
 export default useFetch;

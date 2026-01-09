@@ -22,13 +22,13 @@ export default function Index() {
     data: movies,
     loading: moviesLoading,
     error: moviesError,
-  } = useFetch(() => fetchMovies({}));
+  } = useFetch(() => fetchMovies({}), 800);
 
   const {
     data: trending,
     loading: trendingLoading,
     error: trendingError,
-  } = useFetch(() => getTrendingMovies());
+  } = useFetch(() => getTrendingMovies(), 800);
 
   return (
     <View className="flex-1 bg-primary">
@@ -70,7 +70,7 @@ export default function Index() {
                 showsHorizontalScrollIndicator={false}
                 ItemSeparatorComponent={() => <View className="w-4" />}
                 data={trending}
-                keyExtractor={(item) => item.movie_id.toString()}
+                keyExtractor={(item) => item.movie_id.toString() + Math.random()}
                 renderItem={({ item, index }) => (
                   <TrendingCard movie={item} index={index} />
                 )}
@@ -82,7 +82,7 @@ export default function Index() {
 
               <FlatList
                 data={movies}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.id.toString() + Math.random()}
                 renderItem={({ item }) => (
                   <MovieCard
                     {...item}

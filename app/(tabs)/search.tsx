@@ -40,7 +40,7 @@ export default function Search() {
       <Image source={images.bg} className="absolute w-full z-0" />
       <FlatList
         data={movies}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id.toString() + Math.random()}
         renderItem={({ item }) => <MovieCard {...item} />}
         numColumns={3}
         columnWrapperStyle={{
