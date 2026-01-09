@@ -92,7 +92,7 @@ export default function Search() {
             !loading && !error && (
             <View className="mt-10 px-5">
               <Text className="text-center text-gray-500 mx-auto">
-                {query.trim() ? "No movies found" : "Search for a movie"}
+                {query.trim() ? 'No movies found' : 'Search for a movie'}
               </Text>
             </View>
             )
