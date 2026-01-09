@@ -1,0 +1,48 @@
+export const TMDB_CONFIG = {
+  BASE_URL: "https://api.themoviedb.org/3",
+  API_KEY: process.env.EXPO_PUBLIC_API_KEY,
+  headers: {
+    accept: "application/json",
+    Authorization: `Bearer ${process.env.EXPO_PUBLIC_API_KEY}`,
+  },
+  QUERY_PARAMS: process.env.EXPO_PUBLIC_MOVIES_QUERY_PARAMS,
+};
+
+export const fetchMovies = async ({ query }: { query?: string }) => {
+  const endpoint =
+    TMDB_CONFIG.BASE_URL +
+    (query
+      ? `/search/movie?query=${encodeURIComponent(query)}`
+      : "/discover/movie?sort_by=popularity.desc") + TMDB_CONFIG.QUERY_PARAMS;
+  const response = await fetch(endpoint, {
+    method: "GET",
+    headers: TMDB_CONFIG.headers,
+  });
+
+  if (!response.ok) {
+    // @ts-ignore
+    throw new Error("Failed to fetch movies", response.statusText);
+  }
+
+  const data = await response.json();
+
+  return data.results;
+};
+
+export const fetchMovieDetails = async (id: string) => {
+  const endpoint = TMDB_CONFIG.BASE_URL + `/movie/${id}` + TMDB_CONFIG.QUERY_PARAMS;
+
+  const response = await fetch(endpoint, {
+    method: "GET",
+    headers: TMDB_CONFIG.headers,
+  });
+
+  if (!response.ok) {
+    // @ts-ignore
+    throw new Error("Failed to fetch movies", response.statusText);
+  }
+
+  const data = await response.json();
+
+  return data;
+};
