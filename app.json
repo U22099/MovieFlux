@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/logo.png"
-      }
+      },
+      "package": "com.dan_22099.movieflux"
     },
     "web": {
       "bundler": "metro",
