@@ -16,7 +16,7 @@ export default function Search() {
     error,
     refetch: loadMovies,
     reset,
-  } = useFetch(() => fetchMovies({ query }), undefined, false);
+  } = useFetch(() => fetchMovies({ query }), false);
 
   useEffect(() => {
     const timeoutId = setTimeout(async () => {

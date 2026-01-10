@@ -1,23 +1,26 @@
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import MaskedView from "@react-native-masked-view/masked-view";
-import { View, Text, TouchableOpacity, Image } from "react-native";
-
+import { View, Text, TouchableOpacity, Image, ImageBackground, Alert } from "react-native";
 import { images } from "@/constants/images";
 
 const TrendingCard = ({
   movie: { movie_id, title, poster_url },
   index,
 }: TrendingCardProps) => {
+  const router = useRouter();
   return (
-    <Link href={`/movies/${movie_id}`} asChild>
-      <TouchableOpacity className="w-32 relative pl-5">
-        <Image
+    <TouchableOpacity
+      className="w-32 pl-5"
+      onPress={() => router.push(`/movies/${movie_id}`)}
+    >
+      <View className="relative h-52">
+        <ImageBackground
           source={{ uri: poster_url }}
-          className="w-32 h-48 rounded-lg"
+          className="w-full h-full rounded-lg"
           resizeMode="cover"
         />
 
-        <View className="absolute bottom-9 -left-3.5 px-2 py-1 rounded-full">
+        <View className="absolute bottom-1.5 -left-6 px-2 py-1 rounded-full">
           <MaskedView
             maskElement={
               <Text className="font-bold text-white text-6xl">{index + 1}</Text>
@@ -30,6 +33,7 @@ const TrendingCard = ({
             />
           </MaskedView>
         </View>
+      </View>
 
         <Text
           className="text-sm font-bold mt-2 text-light-200"
@@ -38,7 +42,6 @@ const TrendingCard = ({
           {title}
         </Text>
       </TouchableOpacity>
-    </Link>
   );
 };
 

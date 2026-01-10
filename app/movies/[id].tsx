@@ -5,13 +5,15 @@ import {
   ActivityIndicator,
   ScrollView,
   TouchableOpacity,
+  Linking,
 } from "react-native";
+import {useEffect} from 'react';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { icons } from "@/constants/icons";
 import useFetch from "@/services/useFetch";
-import { fetchMovieDetails } from "@/services/api";
+import { fetchMovieDetails, fetchMovieVideo } from "@/services/api";
 
 interface MovieInfoProps {
   label: string;
@@ -27,6 +29,19 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
   </View>
 );
 
+const openYouTube = async (youtubeVideoId: string) => {
+    const youtubeUrl = `vnd.youtube://www.youtube.com/watch?v=${youtubeVideoId}`;
+    const webUrl = `https://www.youtube.com/watch?v=${youtubeVideoId}`;
+
+    const supported = await Linking.canOpenURL(youtubeUrl);
+
+    if (supported) {
+      await Linking.openURL(youtubeUrl);
+    } else {
+      await Linking.openURL(webUrl);
+    }
+  };
+
 const Details = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
@@ -35,7 +50,11 @@ const Details = () => {
     fetchMovieDetails(id as string)
   );
 
-  if (loading)
+  const { data: video, loading: videoLoading } = useFetch(() =>
+    fetchMovieVideo(id as string)
+  );
+
+  if (loading || videoLoading)
     return (
       <SafeAreaView className="bg-primary flex-1">
         <ActivityIndicator />
@@ -63,7 +82,7 @@ const Details = () => {
           )}
 
           {movie?.video && (
-            <TouchableOpacity className="absolute bottom-5 right-5 rounded-full size-14 bg-white flex items-center justify-center">
+            <TouchableOpacity className="absolute bottom-5 right-5 rounded-full size-14 bg-white flex items-center justify-center" onPress={async () => await openYouTube(video?.key)}>
               <Image
                 source={icons.play}
                 className="w-6 h-7 ml-1"

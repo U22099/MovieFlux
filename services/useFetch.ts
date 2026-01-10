@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 const useFetch = <T>(
-  fetchFunction: () => Promise<T>, 
-  refreshInterval?: number,
+  fetchFunction: () => Promise<T>,
   autoFetch = true, 
 ) => {
   const [data, setData] = useState<T | null>(null);
@@ -12,9 +11,9 @@ const useFetch = <T>(
   const fetchRef = useRef(fetchFunction);
   fetchRef.current = fetchFunction;
 
-  const fetchData = async (isAutoRefresh = false) => {
+  const fetchData = async () => {
     try {
-      if (!isAutoRefresh) setLoading(true);
+      setLoading(true);
       setError(null);
 
       const result = await fetchRef.current();
@@ -23,7 +22,7 @@ const useFetch = <T>(
       setError(err instanceof Error ? err : new Error("An error occurred"));
       console.error(err);
     } finally {
-      if (!isAutoRefresh) setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -35,15 +34,7 @@ const useFetch = <T>(
 
   useEffect(() => {
     if (autoFetch) fetchData();
-
-    if (refreshInterval) {
-      const interval = setInterval(() => {
-        fetchData(true);
-      }, refreshInterval);
-
-      return () => clearInterval(interval);
-    }
-  }, [autoFetch, refreshInterval]);
+  }, [autoFetch]);
 
   return { data, loading, error, refetch: () => fetchData(), reset };
 };
