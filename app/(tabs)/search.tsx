@@ -39,7 +39,10 @@ export default function Search() {
       <FlatList
         data={movies}
         keyExtractor={(item) => item.id.toString() + Math.random()}
-        renderItem={({ item }) => <MovieCard {...item} />}
+        renderItem={({ item }) => (
+        <View className={`${horizontal ? "w-32" : "w-[30%]"}`}> 
+        <MovieCard {...item} />
+        </view>)}
         numColumns={3}
         columnWrapperStyle={{
           justifyContent: "flex-start",
