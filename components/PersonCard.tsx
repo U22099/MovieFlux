@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
+import React from "react";
+import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 
 interface Person {
   id: number;
@@ -17,11 +17,10 @@ interface PersonCardProps {
 export default function PersonCard({ person, onPress }: PersonCardProps) {
   const imageUrl = person.profile_path
     ? `https://image.tmdb.org/t/p/w500${person.profile_path}`
-    : 'https://via.placeholder.com/300x450?text=No+Image';
+    : "https://via.placeholder.com/300x450?text=No+Image";
 
-  const topKnown = person.known_for?.[0]?.title || 
-                   person.known_for?.[0]?.name || 
-                   'Unknown';
+  const topKnown =
+    person.known_for?.[0]?.title || person.known_for?.[0]?.name || "Unknown";
 
   return (
     <TouchableOpacity
@@ -36,14 +35,14 @@ export default function PersonCard({ person, onPress }: PersonCardProps) {
       />
 
       <View className="p-3 items-center">
-        <Text 
+        <Text
           className="text-white text-base font-bold text-center mb-1"
           numberOfLines={1}
         >
           {person.name}
         </Text>
 
-        <Text 
+        <Text
           className="text-gray-400 text-sm text-center mb-1.5"
           numberOfLines={1}
         >

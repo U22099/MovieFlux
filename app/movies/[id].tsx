@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import {useEffect} from 'react';
+import { useEffect } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -30,28 +30,28 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
 );
 
 const openYouTube = async (youtubeVideoId: string) => {
-    const youtubeUrl = `vnd.youtube://www.youtube.com/watch?v=${youtubeVideoId}`;
-    const webUrl = `https://www.youtube.com/watch?v=${youtubeVideoId}`;
+  const youtubeUrl = `vnd.youtube://www.youtube.com/watch?v=${youtubeVideoId}`;
+  const webUrl = `https://www.youtube.com/watch?v=${youtubeVideoId}`;
 
-    const supported = await Linking.canOpenURL(youtubeUrl);
+  const supported = await Linking.canOpenURL(youtubeUrl);
 
-    if (supported) {
-      await Linking.openURL(youtubeUrl);
-    } else {
-      await Linking.openURL(webUrl);
-    }
-  };
+  if (supported) {
+    await Linking.openURL(youtubeUrl);
+  } else {
+    await Linking.openURL(webUrl);
+  }
+};
 
 const Details = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
   const { data: movie, loading } = useFetch(() =>
-    fetchMovieDetails(id as string)
+    fetchMovieDetails(id as string),
   );
 
   const { data: video, loading: videoLoading } = useFetch(() =>
-    fetchMovieVideo(id as string)
+    fetchMovieVideo(id as string),
   );
 
   if (loading || videoLoading)
@@ -82,7 +82,10 @@ const Details = () => {
           )}
 
           {movie?.video && (
-            <TouchableOpacity className="absolute bottom-5 right-5 rounded-full size-14 bg-white flex items-center justify-center" onPress={async () => await openYouTube(video?.key)}>
+            <TouchableOpacity
+              className="absolute bottom-5 right-5 rounded-full size-14 bg-white flex items-center justify-center"
+              onPress={async () => await openYouTube(video?.key)}
+            >
               <Image
                 source={icons.play}
                 className="w-6 h-7 ml-1"
@@ -90,6 +93,12 @@ const Details = () => {
               />
             </TouchableOpacity>
           )}
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="absolute top-4 left-4 bg-dark-100 px-6 py-3.5 rounded-full"
+          >
+            <Text className="text-white text-xl">←</Text>
+          </TouchableOpacity>
         </View>
 
         <View className="flex-col items-start justify-center mt-5 px-5">
@@ -127,7 +136,7 @@ const Details = () => {
             <MovieInfo
               label="Revenue"
               value={`$${Math.round(
-                (movie?.revenue ?? 0) / 1_000_000
+                (movie?.revenue ?? 0) / 1_000_000,
               )} million`}
             />
           </View>
@@ -142,18 +151,6 @@ const Details = () => {
           />
         </View>
       </ScrollView>
-
-      <TouchableOpacity
-        className="absolute bottom-5 left-0 right-0 mx-5 bg-accent rounded-lg py-3.5 flex flex-row items-center justify-center z-50 mb-5"
-        onPress={router.back}
-      >
-        <Image
-          source={icons.arrow}
-          className="size-5 mr-1 mt-0.5 rotate-180"
-          tintColor="#fff"
-        />
-        <Text className="text-white font-semibold text-base">Go Back</Text>
-      </TouchableOpacity>
     </View>
   );
 };

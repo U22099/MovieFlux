@@ -48,7 +48,7 @@ export default function HomeScreen() {
     error: appTrendingError,
   } = useFetch(() => getTrendingMovies());
 
-   const {
+  const {
     data: people,
     loading: peopleLoading,
     error: peopleError,
@@ -85,7 +85,10 @@ export default function HomeScreen() {
               </View>
             ) : (
               <View className={`${horizontal ? "w-32" : "w-[30%]"}`}>
-              <PersonCard person={item} />
+                <PersonCard
+                  person={item}
+                  onPress={() => router.push(`/person/${item.id as string}`)}
+                />
               </View>
             )
           }
@@ -133,7 +136,10 @@ export default function HomeScreen() {
             placeholder="Search movies..."
           />
 
-          {(isLoading || trendingLoading || appTrendingLoading || peopleLoading) &&
+          {(isLoading ||
+            trendingLoading ||
+            appTrendingLoading ||
+            peopleLoading) &&
           !refreshing ? (
             <ActivityIndicator size="large" color="#FF4444" className="mt-20" />
           ) : hasError || trendingError || appTrendingError || peopleError ? (

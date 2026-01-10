@@ -1,6 +1,13 @@
 import { useRouter } from "expo-router";
 import MaskedView from "@react-native-masked-view/masked-view";
-import { View, Text, TouchableOpacity, Image, ImageBackground, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ImageBackground,
+  Alert,
+} from "react-native";
 import { images } from "@/constants/images";
 
 const TrendingCard = ({
@@ -35,13 +42,10 @@ const TrendingCard = ({
         </View>
       </View>
 
-        <Text
-          className="text-sm font-bold mt-2 text-light-200"
-          numberOfLines={2}
-        >
-          {title}
-        </Text>
-      </TouchableOpacity>
+      <Text className="text-sm font-bold mt-2 text-light-200" numberOfLines={2}>
+        {title}
+      </Text>
+    </TouchableOpacity>
   );
 };
 

@@ -8,7 +8,7 @@ const useMovieLists = () => {
   const lists = {
     discover: useFetch(() => fetchMovies({})),
     trending: useFetch(() => fetchMovies({ query: "$trending_today$" })),
-    popular:  useFetch(() => fetchMovies({ query: "$popular$" })),
+    popular: useFetch(() => fetchMovies({ query: "$popular$" })),
     upcoming: useFetch(() => fetchMovies({ query: "$upcoming$" })),
     nowPlaying: useFetch(() => fetchMovies({ query: "$now_playing$" })),
     topRated: useFetch(() => fetchMovies({ query: "$top_rated$" })),
@@ -17,23 +17,21 @@ const useMovieLists = () => {
   const refreshAll = useCallback(async () => {
     setRefreshing(true);
     try {
-      await Promise.all(
-        Object.values(lists).map(list => list.refetch())
-      );
+      await Promise.all(Object.values(lists).map((list) => list.refetch()));
     } finally {
       setRefreshing(false);
     }
   }, [lists]);
 
-  const isLoading = Object.values(lists).some(l => l.loading);
-  const hasError = Object.values(lists).some(l => !!l.error);
+  const isLoading = Object.values(lists).some((l) => l.loading);
+  const hasError = Object.values(lists).some((l) => !!l.error);
 
   return {
     lists,
     refreshing,
     refreshAll,
     isLoading,
-    hasError
+    hasError,
   };
 };
 

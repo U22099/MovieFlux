@@ -6,12 +6,10 @@ const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID!;
 const TABLE_ID = process.env.EXPO_PUBLIC_APPWRITE_TABLE_ID!;
 const PROJECT_ID = process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!;
 
-const client = new Client()
-  .setEndpoint(ENDPOINT)
-  .setProject(PROJECT_ID);
+const client = new Client().setEndpoint(ENDPOINT).setProject(PROJECT_ID);
 
-if (Platform.OS !== 'web') {
-    client.setPlatform(`com.dan_22099.movieflux`);
+if (Platform.OS !== "web") {
+  client.setPlatform(`com.dan_22099.movieflux`);
 }
 
 const table = new TablesDB(client);
@@ -56,7 +54,9 @@ export const updateSearchCount = async (query: string, movie: Movie) => {
   }
 };
 
-export const getTrendingMovies = async (): Promise<TrendingMovie[] | undefined> => {
+export const getTrendingMovies = async (): Promise<
+  TrendingMovie[] | undefined
+> => {
   try {
     const result = await table.listRows({
       databaseId: DATABASE_ID,
@@ -68,4 +68,4 @@ export const getTrendingMovies = async (): Promise<TrendingMovie[] | undefined> 
     console.error("Appwrite Fetch Error:", error);
     return [];
   }
-}
+};
