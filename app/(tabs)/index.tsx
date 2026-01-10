@@ -87,6 +87,7 @@ export default function HomeScreen() {
               <View className={`${horizontal ? "w-32" : "w-[30%]"}`}>
                 <PersonCard
                   person={item}
+                  // @ts-ignore
                   onPress={() => router.push(`/person/${item.id as string}`)}
                 />
               </View>
