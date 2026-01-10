@@ -16,7 +16,6 @@ const MovieCard = ({
   vote_average,
   release_date,
   adult,
-  popularity,
   video
 }: Movie) => {
   return (

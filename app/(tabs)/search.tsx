@@ -5,12 +5,10 @@ import { images } from "@/constants/images";
 import { fetchMovies } from "@/services/api";
 import { updateSearchCount } from "@/services/appwrite";
 import useFetch from "@/services/useFetch";
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Image, Text, View } from "react-native";
 
 export default function Search() {
-  const router = useRouter();
   const [query, setQuery] = useState<string>("");
   const {
     data: movies,
@@ -18,7 +16,7 @@ export default function Search() {
     error,
     refetch: loadMovies,
     reset,
-  } = useFetch(() => fetchMovies({ query }), false);
+  } = useFetch(() => fetchMovies({ query }), undefined, false);
 
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
