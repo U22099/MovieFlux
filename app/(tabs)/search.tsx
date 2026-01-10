@@ -42,7 +42,7 @@ export default function Search() {
         renderItem={({ item }) => (
         <View className="w-[30%]"> 
         <MovieCard {...item} />
-        </view>)}
+        </View>)}
         numColumns={3}
         columnWrapperStyle={{
           justifyContent: "flex-start",
