@@ -40,7 +40,7 @@ export default function Search() {
         data={movies}
         keyExtractor={(item) => item.id.toString() + Math.random()}
         renderItem={({ item }) => (
-        <View className={`${horizontal ? "w-32" : "w-[30%]"}`}> 
+        <View className="w-[30%]"> 
         <MovieCard {...item} />
         </view>)}
         numColumns={3}
