@@ -57,7 +57,7 @@ const Details = () => {
   if (loading || videoLoading)
     return (
       <SafeAreaView className="bg-primary flex-1">
-        <ActivityIndicator />
+        <ActivityIndicator color="#AB8BFF"/>
       </SafeAreaView>
     );
 

@@ -26,7 +26,7 @@ export default function PersonDetails() {
   if (loading)
     return (
       <SafeAreaView className="bg-primary flex-1">
-        <ActivityIndicator />
+        <ActivityIndicator color="#AB8BFF"/>
       </SafeAreaView>
     );
 

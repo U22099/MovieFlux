@@ -19,30 +19,38 @@ export default function Search() {
   } = useFetch(() => fetchMovies({ query }), false);
 
   useEffect(() => {
-    const timeoutId = setTimeout(async () => {
+    const timeoutId = setTimeout(() => {
       if (query.trim()) {
-        await loadMovies();
-      } else reset();
+        loadMovies();
+      } else {
+        reset();
+      }
     }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [query]);
 
   useEffect(() => {
-    if (movies?.length > 0 && query.trim().length > 1)
+    if (movies?.length > 0 && query.trim().length > 1) {
       updateSearchCount(query, movies[0]);
-  }, [movies]);
+    }
+  }, [movies, query]);
+
+  const showResultsHeader =
+    !loading && !error && query.trim() && movies?.length > 0;
 
   return (
     <View className="flex-1 bg-primary">
       <Image source={images.bg} className="absolute w-full z-0" />
+
       <FlatList
         data={movies}
         keyExtractor={(item) => item.id.toString() + Math.random()}
         renderItem={({ item }) => (
-        <View className="w-[30%]"> 
-        <MovieCard {...item} />
-        </View>)}
+          <View className="w-[30%]">
+            <MovieCard {...item} />
+          </View>
+        )}
         numColumns={3}
         columnWrapperStyle={{
           justifyContent: "flex-start",
@@ -65,40 +73,38 @@ export default function Search() {
                 placeholder="Search for movies"
               />
             </View>
+
             {loading ? (
               <ActivityIndicator
                 size="large"
-                color="#0000FF"
+                color="#AB8BFF"
                 className="mb-2 self-center"
               />
             ) : error ? (
               <Text className="text-red-500 self-center text-lg mb-2">
                 Error: {error?.message}
               </Text>
-            ) : (
-              !loading &&
-              !error &&
-              query.trim() &&
-              movies?.length && (
-                <Text className="text-xl text-white font-bold mb-2">
-                  Search Results for{" "}
-                  <Text className="text-accent">{query}</Text>
-                </Text>
-              )
-            )}
-          </>
-        }
-        ListEmptyComponent={
-          <>
-            !loading && !error && (
-            <View className="mt-10 px-5">
-              <Text className="text-center text-gray-500 mx-auto">
-                {query.trim() ? "No movies found" : "Search for a movie"}
+            ) : showResultsHeader ? (
+              <Text className="text-xl text-white font-bold mb-2">
+                Search Results for{" "}
+                <Text className="text-accent">{query}</Text>
               </Text>
-            </View>
-            )
+            ) : null}
           </>
         }
+        ListEmptyComponent={() => (
+          <View className="mt-10 px-5">
+            {query.trim() ? (
+              <Text className="text-center text-gray-500">
+                No movies found
+              </Text>
+            ) : (
+              <Text className="text-center text-gray-500">
+                Search for a movie
+              </Text>
+            )}
+          </View>
+        )}
       />
     </View>
   );

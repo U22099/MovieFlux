@@ -1,6 +1,5 @@
 import {
   Text,
-  ScrollView,
   Image,
   View,
   ActivityIndicator,
@@ -12,6 +11,7 @@ import { useRouter } from "expo-router";
 import SearchBar from "@/components/SearchBar";
 import MovieCard from "@/components/MovieCard";
 import TrendingCard from "@/components/TrendingCard";
+import PersonCard from "@/components/PersonCard";
 
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
@@ -19,92 +19,121 @@ import useMovieLists from "@/services/useMovieLists";
 import { getTrendingMovies } from "@/services/appwrite";
 import { fetchPeople } from "@/services/api";
 import useFetch from "@/services/useFetch";
-import PersonCard from "@/components/PersonCard";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { lists, refreshing, refreshAll, isLoading, hasError } =
-    useMovieLists();
+  const { lists, refreshing, refreshAll, isLoading, hasError } = useMovieLists();
 
-  const {
-    data: trending,
-    loading: trendingLoading,
-    error: trendingError,
-  } = lists.trending;
-
+  const { data: trending, loading: trendingLoading, error: trendingError } = lists.trending;
   const { data: discover } = lists.discover;
-
   const { data: popular } = lists.popular;
-
   const { data: upcoming } = lists.upcoming;
-
   const { data: nowPlaying } = lists.nowPlaying;
-
   const { data: topRated } = lists.topRated;
 
-  const {
-    data: appTrending,
-    loading: appTrendingLoading,
-    error: appTrendingError,
-  } = useFetch(() => getTrendingMovies());
+  const { data: appTrending, loading: appTrendingLoading, error: appTrendingError } = useFetch(() =>
+    getTrendingMovies()
+  );
 
-  const {
-    data: people,
-    loading: peopleLoading,
-    error: peopleError,
-  } = useFetch(() => fetchPeople());
+  const { data: people, loading: peopleLoading, error: peopleError } = useFetch(() => fetchPeople());
 
-  const renderSection = (
-    title: string,
+  const renderHorizontalList = (
     data?: any[],
-    people: boolean = false,
-    horizontal: boolean = true,
+    renderPerson: boolean = false
   ) => {
     if (!data?.length) return null;
 
     return (
+      <FlatList
+        data={data}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => (item.id ? item.id.toString() : item.movie_id.toString()) + Math.random()}
+        ItemSeparatorComponent={() => <View className="w-4" />}
+        contentContainerStyle={{ paddingHorizontal: 20 }}
+        renderItem={({ item, index }) =>
+          renderPerson ? (
+            <View className="w-32">
+              <PersonCard
+                person={item}
+                // @ts-ignore
+                onPress={() => router.push(`/person/${item.id as string}`)}
+              />
+            </View>
+          ) : (
+            <View className="w-32">
+              <TrendingCard movie={item} index={index}/>
+            </View>
+          )
+        }
+      />
+    );
+  };
+
+  const renderGridSection = (title: string, data?: any[]) => {
+    if (!data?.length) return null;
+
+    return (
       <View className="mt-6">
-        <Text className="text-xl text-white font-bold mt-5 mb-3">{title}</Text>
+        <Text className="text-xl text-white font-bold mt-5 mb-3 px-5">
+          {title}
+        </Text>
 
         <FlatList
           data={data}
-          horizontal={horizontal}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.id.toString()}
-          ItemSeparatorComponent={() =>
-            horizontal ? <View className="w-4" /> : null
-          }
-          contentContainerStyle={
-            horizontal ? { paddingHorizontal: 20 } : undefined
-          }
-          renderItem={({ item, index }) =>
-            !people ? (
-              <View className={`${horizontal ? "w-32" : "w-[30%]"}`}>
-                <MovieCard {...item} />
-              </View>
-            ) : (
-              <View className={`${horizontal ? "w-32" : "w-[30%]"}`}>
-                <PersonCard
-                  person={item}
-                  // @ts-ignore
-                  onPress={() => router.push(`/person/${item.id as string}`)}
-                />
-              </View>
-            )
-          }
-          {...(!horizontal && {
-            numColumns: 3,
-            columnWrapperStyle: {
-              gap: 16,
-              paddingHorizontal: 20,
-              marginBottom: 16,
-            },
-          })}
+          numColumns={3}
+          keyExtractor={(item) => item.id.toString() + Math.random()}
+          columnWrapperStyle={{
+            gap: 16,
+            paddingHorizontal: 20,
+            marginBottom: 16,
+          }}
+          renderItem={({ item }) => (
+            <View className="w-[30%]">
+              <MovieCard {...item} />
+            </View>
+          )}
         />
       </View>
     );
   };
+
+  const isAnyLoading =
+    isLoading || trendingLoading || appTrendingLoading || peopleLoading;
+
+  const hasAnyError =
+    hasError || trendingError || appTrendingError || peopleError; 
+
+  const sections = [
+     {
+      key: "trending-searches",
+      render: () => (
+        <View className="mt-2">
+          <Text className="text-xl text-white font-bold mt-5 mb-3 px-5">
+            Trending Searches
+          </Text>
+          {renderHorizontalList(appTrending as any)}
+        </View>
+      ),
+    },
+    {
+      key: "popular-actors",
+      render: () => (
+        <View className="mt-6">
+          <Text className="text-xl text-white font-bold mt-5 mb-3 px-5">
+            Popular Actors/Actress
+          </Text>
+          {renderHorizontalList(people, true)}
+        </View>
+      ),
+    },
+    { key: "trending", render: () => renderGridSection("Trending Today", trending) },
+    { key: "upcoming", render: () => renderGridSection("Coming Soon", upcoming) },
+    { key: "popular", render: () => renderGridSection("Popular", popular) },
+    { key: "top-rated", render: () => renderGridSection("Top Rated", topRated) },
+    { key: "now-playing", render: () => renderGridSection("Now Playing", nowPlaying) },
+    { key: "discover", render: () => renderGridSection("Discover", discover) },
+  ].filter((s) => s.render());
 
   return (
     <View className="flex-1 bg-primary">
@@ -114,8 +143,9 @@ export default function HomeScreen() {
         resizeMode="cover"
       />
 
-      <ScrollView
-        className="flex-1"
+      <FlatList
+        data={sections}
+        keyExtractor={(item) => item.key}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -125,59 +155,36 @@ export default function HomeScreen() {
             titleColor="#ddd"
           />
         }
+        ListHeaderComponent={
+          <>
+            <View className="items-center pt-10 pb-6">
+              <Image source={icons.logo} className="w-14 h-11" />
+            </View>
+
+            <View className="px-5">
+              <SearchBar
+                onPress={() => router.push("/search")}
+                placeholder="Search movies..."
+              />
+            </View>
+
+            {isAnyLoading && !refreshing ? (
+              <ActivityIndicator
+                size="large"
+                color="#AB8BFF"
+                className="mt-20"
+              />
+            ) : hasAnyError ? (
+              <Text className="text-red-500 text-center text-lg mt-10 px-5">
+                Something went wrong. Pull down to try again.
+              </Text>
+            ) : null}
+          </>
+        }
+        renderItem={({ item }) => item.render()}
         contentContainerStyle={{ paddingBottom: 100 }}
-      >
-        <View className="items-center pt-10 pb-6">
-          <Image source={icons.logo} className="w-14 h-11" />
-        </View>
-
-        <View className="px-5">
-          <SearchBar
-            onPress={() => router.push("/search")}
-            placeholder="Search movies..."
-          />
-
-          {(isLoading ||
-            trendingLoading ||
-            appTrendingLoading ||
-            peopleLoading) &&
-          !refreshing ? (
-            <ActivityIndicator size="large" color="#FF4444" className="mt-20" />
-          ) : hasError || trendingError || appTrendingError || peopleError ? (
-            <Text className="text-red-500 text-center text-lg mt-10">
-              Something went wrong. Pull down to try again.
-            </Text>
-          ) : (
-            <>
-              <View className="mt-2">
-                <Text className="text-xl text-white font-bold mt-5 mb-3">
-                  Trending Searches
-                </Text>
-
-                <FlatList
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  ItemSeparatorComponent={() => <View className="w-4" />}
-                  data={appTrending}
-                  keyExtractor={(item) =>
-                    item.movie_id.toString() + Math.random()
-                  }
-                  renderItem={({ item, index }) => (
-                    <TrendingCard movie={item} index={index} />
-                  )}
-                />
-              </View>
-              {renderSection("Popular Actors/Actress", people, true, true)}
-              {renderSection("Trending Today", trending)}
-              {renderSection("Coming Soon", upcoming)}
-              {renderSection("Popular", popular)}
-              {renderSection("Top Rated", topRated)}
-              {renderSection("Now Playing", nowPlaying)}
-              {renderSection("Discover", discover, false, false)}
-            </>
-          )}
-        </View>
-      </ScrollView>
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 }
