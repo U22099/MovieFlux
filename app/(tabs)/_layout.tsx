@@ -15,18 +15,15 @@ const TabIcon = ({
 }): JSX.Element => {
   if (focused)
     return (
-      <ImageBackground
-        source={images.highlight}
-        className="flex flex-row w-full flex-1 min-w-[112px] min-h-16 mt-4 justify-center items-center gap-2 rounded-full overflow-hidden"
-      >
-        <Image source={icon} tintColor="#151312" className="size-5" />
-        <Text className="text-secondary text-base font-semibold">{title}</Text>
-      </ImageBackground>
+      <View className="flex flex-row justify-center items-center h-16 mt-5 w-full min-w-[200px] gap-2 bg-accent">
+        <Image source={icon} tintColor="#151312" className="size-6" />
+        <Text className="text-secondary text-base font-bold">{title}</Text>
+      </View>
     );
   else
     return (
-      <View className="size-full justify-center items-center mt-4 rounded-full">
-        <Image source={icon} tintColor="#A8B5DB" className="size-5" />
+      <View className="size-full justify-center items-center mt-5 rounded-full">
+        <Image source={icon} tintColor="#A8B5DB" className="size-6" />
       </View>
     );
 };
@@ -50,7 +47,7 @@ const _Layout = () => {
           height: 52,
           position: "absolute",
           overflow: "hidden",
-          borderWidth: 1,
+          borderWidth: 0,
           borderColor: "#0F0D23",
         },
       }}

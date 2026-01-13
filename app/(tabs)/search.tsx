@@ -34,7 +34,7 @@ export default function Search() {
     if (movies?.length > 0 && query.trim().length > 1) {
       updateSearchCount(query, movies[0]);
     }
-  }, [movies, query]);
+  }, [movies]);
 
   const showResultsHeader =
     !loading && !error && query.trim() && movies?.length > 0;
